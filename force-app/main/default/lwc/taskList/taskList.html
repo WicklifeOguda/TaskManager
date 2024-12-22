@@ -1,0 +1,28 @@
+<template>
+  <div class="task-container">
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Due Date</th>
+          <th>Completed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template for:each={tasks} for:item="task">
+          <tr key={task.Id}>
+            <td>{task.Name}</td>
+            <td>{task.Due_Date__c}</td>
+            <td>
+              <lightning-input
+                type="checkbox"
+                checked={task.Completed__c}
+                onchange={handleComplete}
+              ></lightning-input>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+</template>

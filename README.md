@@ -3,6 +3,7 @@
 This is a guide on how to setup and test the project as I have done it, assuming you are cloning from my repo. Also I am assuming you have an environment with SalesForce well setup and configured. Most of the commands here assumes you are using a unix based terminal (Linux/Mac) except those that are Salesforce-specific should be the same on any OS.
 
 1. Clone the project: using git clone
+   `git clone git@github.com:WicklifeOguda/task-manager.git`
 
 2. Open the project in your editor and confirm that all requirements are met, install anything that are user specific which are not pushed together with the project. Your editor will give you warnings about the missing dependencies or important tools.
 
@@ -18,7 +19,7 @@ Completed\_\_c (Checkbox, default false)
 To deploy the custom object and code to your Salesforce org:
 Authenticate to your Salesforce org using:
 
-`sfdx auth:web:login -a YourOrgAlias`
+`sfdx force:auth:web:login -a <YourOrgAlias or username>`
 
 Deploy the metadata using Salesforce DX (e.g., if you're using a Scratch org):
 
@@ -28,7 +29,8 @@ If you're using a non-Scratch org (e.g., Sandboxes or Production), deploy with:
 
 `sfdx force:source:deploy -p force-app/main/default`
 
-If the deployment fails, check the error logs and adjust any configurations as needed.
+For deploying only the specific objects
+`sfdx force:source:deploy -p force-app/main/default/objects/`
 
 ## 2. Accessing and Testing the LWC
 

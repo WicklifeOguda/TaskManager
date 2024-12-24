@@ -1,22 +1,37 @@
 <template>
-  <div class="task-container">
-    <table class="task-table">
+  <div
+    class="slds-box slds-var-m-around_medium slds-var-p-around_small slds-theme_default"
+  >
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
       <thead>
-        <tr>
-          <th>Name</th>
-          <th>Due Date</th>
-          <th>Completed</th>
+        <tr class="slds-line-height_reset">
+          <th scope="col">
+            <div class="slds-truncate" title="Name">Name</div>
+          </th>
+          <th scope="col">
+            <div class="slds-truncate" title="Due Date">Due Date</div>
+          </th>
+          <th scope="col">
+            <div class="slds-truncate" title="Completed">Completed</div>
+          </th>
         </tr>
       </thead>
       <tbody>
         <template for:each={tasks} for:item="task">
           <tr key={task.Id}>
-            <td>{task.Name}</td>
-            <td>{task.Due_Date__c}</td>
+            <td>
+              <div class="slds-truncate" title={task.Name}>{task.Name}</div>
+            </td>
+            <td>
+              <div class="slds-truncate" title={task.Due_Date__c}>
+                {task.Due_Date__c}
+              </div>
+            </td>
             <td>
               <lightning-input
                 type="checkbox"
                 checked={task.Completed__c}
+                class="slds-checkbox"
                 onchange={handleComplete}
               ></lightning-input>
             </td>

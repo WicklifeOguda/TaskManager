@@ -1,58 +1,113 @@
-# Salesforce App
+# Salesforce TaskManager
 
-This guide helps Salesforce developers who are new to Visual Studio Code go from zero to a deployed app using Salesforce Extensions for VS Code and Salesforce CLI.
+This is a guide on how to setup and test the project as I have done it, assuming you are cloning from my repo. Also I am assuming you have an environment with SalesForce well setup and configured. Most of the commands here assumes you are using a unix based terminal (Linux/Mac) except those that are Salesforce-specific should be the same on any OS.
 
-## Part 1: Choosing a Development Model
+1. Clone the project: using git clone
 
-There are two types of developer processes or models supported in Salesforce Extensions for VS Code and Salesforce CLI. These models are explained below. Each model offers pros and cons and is fully supported.
+2. Open the project in your editor and confirm that all requirements are met, install anything that are user specific which are not pushed together with the project. Your editor will give you warnings about the missing dependencies or important tools.
 
-### Package Development Model
+## 1. Deploying the Custom Object and Code
 
-The package development model allows you to create self-contained applications or libraries that are deployed to your org as a single package. These packages are typically developed against source-tracked orgs called scratch orgs. This development model is geared toward a more modern type of software development process that uses org source tracking, source control, and continuous integration and deployment.
+### Custom Object: Task\_\_c
 
-If you are starting a new project, we recommend that you consider the package development model. To start developing with this model in Visual Studio Code, see [Package Development Model with VS Code](https://forcedotcom.github.io/salesforcedx-vscode/articles/user-guide/package-development-model). For details about the model, see the [Package Development Model](https://trailhead.salesforce.com/en/content/learn/modules/sfdx_dev_model) Trailhead module.
+The custom object Task**c with the following fields:
+Name (Text) - Required
+Due_Date**c (Date)
+Completed\_\_c (Checkbox, default false)
 
-If you are developing against scratch orgs, use the command `SFDX: Create Project` (VS Code) or `sfdx force:project:create` (Salesforce CLI)  to create your project. If you used another command, you might want to start over with that command.
+To deploy the custom object and code to your Salesforce org:
+Authenticate to your Salesforce org using:
 
-When working with source-tracked orgs, use the commands `SFDX: Push Source to Org` (VS Code) or `sfdx force:source:push` (Salesforce CLI) and `SFDX: Pull Source from Org` (VS Code) or `sfdx force:source:pull` (Salesforce CLI). Do not use the `Retrieve` and `Deploy` commands with scratch orgs.
+`sfdx auth:web:login -a YourOrgAlias`
 
-### Org Development Model
+Deploy the metadata using Salesforce DX (e.g., if you're using a Scratch org):
 
-The org development model allows you to connect directly to a non-source-tracked org (sandbox, Developer Edition (DE) org, Trailhead Playground, or even a production org) to retrieve and deploy code directly. This model is similar to the type of development you have done in the past using tools such as Force.com IDE or MavensMate.
+`sfdx force:source:push`
 
-To start developing with this model in Visual Studio Code, see [Org Development Model with VS Code](https://forcedotcom.github.io/salesforcedx-vscode/articles/user-guide/org-development-model). For details about the model, see the [Org Development Model](https://trailhead.salesforce.com/content/learn/modules/org-development-model) Trailhead module.
+If you're using a non-Scratch org (e.g., Sandboxes or Production), deploy with:
 
-If you are developing against non-source-tracked orgs, use the command `SFDX: Create Project with Manifest` (VS Code) or `sfdx force:project:create --manifest` (Salesforce CLI) to create your project. If you used another command, you might want to start over with this command to create a Salesforce DX project.
+`sfdx force:source:deploy -p force-app/main/default`
 
-When working with non-source-tracked orgs, use the commands `SFDX: Deploy Source to Org` (VS Code) or `sfdx force:source:deploy` (Salesforce CLI) and `SFDX: Retrieve Source from Org` (VS Code) or `sfdx force:source:retrieve` (Salesforce CLI). The `Push` and `Pull` commands work only on orgs with source tracking (scratch orgs).
+If the deployment fails, check the error logs and adjust any configurations as needed.
 
-## The `sfdx-project.json` File
+## 2. Accessing and Testing the LWC
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+Adding the LWC to a Lightning App or Tab
 
-The most important parts of this file for getting started are the `sfdcLoginUrl` and `packageDirectories` properties.
+To view and test the taskList Lightning Web Component (LWC):
 
-The `sfdcLoginUrl` specifies the default login URL to use when authorizing an org.
+    Create a Lightning App Page:
+        1. Go to Setup in Salesforce.
+        2. Search for App Builder.
+        3. Select Lightning App Builder.
+        4. Click New and choose App Page.
+        5. Drag the taskList component onto the page and save.
 
-The `packageDirectories` filepath tells VS Code and Salesforce CLI where the metadata files for your project are stored. You need at least one package directory set in your file. The default setting is shown below. If you set the value of the `packageDirectories` property called `path` to `force-app`, by default your metadata goes in the `force-app` directory. If you want to change that directory to something like `src`, simply change the `path` value and make sure the directory you’re pointing to exists.
+    Add the LWC to a Lightning Tab:
+        1. Go to Setup and search for Tabs.
+        2. Under Lightning Component Tabs, click New.
+        3. Choose the taskList component and give it a name (e.g., Task Management).
+        4. Save and add the tab to your app.
 
-```json
-"packageDirectories" : [
-    {
-      "path": "force-app",
-      "default": true
-    }
-]
-```
+    Testing the LWC:
+        After deploying, open your Salesforce app and navigate to the app page or tab where taskList is displayed.
+        You should see the list of tasks with checkboxes that can be marked as completed.
 
-## Part 2: Working with Source
+## 3. Running and Testing the Batch/Queueable Job
 
-For details about developing against scratch orgs, see the [Package Development Model](https://trailhead.salesforce.com/en/content/learn/modules/sfdx_dev_model) module on Trailhead or [Package Development Model with VS Code](https://forcedotcom.github.io/salesforcedx-vscode/articles/user-guide/package-development-model).
+Manually Running the Queueable Job
 
-For details about developing against orgs that don’t have source tracking, see the [Org Development Model](https://trailhead.salesforce.com/content/learn/modules/org-development-model) module on Trailhead or [Org Development Model with VS Code](https://forcedotcom.github.io/salesforcedx-vscode/articles/user-guide/org-development-model).
+From the Developer Console:
+Open the Developer Console from your Salesforce org.
+Go to Debug -> Open Execute Anonymous Window.
+Run the following Apex code to execute the batch job:
 
-## Part 3: Deploying to Production
+`System.enqueueJob(new CompleteOverdueTasks());`
 
-Don’t deploy your code to production directly from Visual Studio Code. The deploy and retrieve commands do not support transactional operations, which means that a deployment can fail in a partial state. Also, the deploy and retrieve commands don’t run the tests needed for production deployments. The push and pull commands are disabled for orgs that don’t have source tracking, including production orgs.
+This will run the batch job, which will update all tasks where Due_Date**c is less than today and Completed**c is false.
 
-Deploy your changes to production using [packaging](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_dev2gp.htm) or by [converting your source](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_force_source.htm#cli_reference_convert) into metadata format and using the [metadata deploy command](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_force_mdapi.htm#cli_reference_deploy).
+Or
+`System.schedule('Daily Task Completion Job', '0 0 0 * * ?', new CompleteOverdueTasksScheduler());`
+
+Where the Cron Expression: `'0 0 0 * * ?'` schedules the job daily at midnight.
+
+Manually Scheduling the Job:
+
+Go to Setup -> Apex Classes.
+Click Schedule Apex.
+Set the job to run at a specific interval (e.g., daily) by selecting the Scheduled Jobs section.
+Choose the class `CompleteOverdueTasks` and define the scheduling parameters.
+
+## 4. Calling the Apex REST Endpoint
+
+Accessing the Task REST Endpoint
+
+The REST API allows you to retrieve a list of tasks. To call the endpoint:
+
+    Using cURL:
+
+        First, authenticate and get a Salesforce access token:
+
+curl -X POST https://login.salesforce.com/services/oauth2/token \
+ -d "grant_type=password" \
+ -d "client_id=<YourConsumerKey>" \
+ -d "client_secret=<YourConsumerSecret>" \
+ -d "username=<YourSalesforceUsername>" \
+ -d "password=<YourSalesforcePasswordAndToken>"
+
+After receiving the access token, use it in the following cURL command to make a GET request:
+
+    curl -X GET https://<yourInstance>.salesforce.com/services/apexrest/tasks \
+         -H "Authorization: Bearer <AccessToken>"
+
+Using Postman:
+
+    1. Open Postman and set up a new GET request.
+    2. Use the URL: `https://<yourInstance>.salesforce.com/services/apexrest/tasks`.
+    3. In the Authorization tab, select Bearer Token and paste the token you    received from the OAuth authentication.
+    4. Send the request, and you should receive a list of tasks in JSON format.
+
+## Assumptions
+
+This solution assumes you are using Salesforce DX, and that you have access to the Salesforce Developer Console and Lightning App Builder for testing.
+The batch job assumes that there is a significant number of Task\_\_c records to process.
